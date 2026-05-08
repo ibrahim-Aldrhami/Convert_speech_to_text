@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>تحويل رابط إلى باركود (QR)</title>
+  <style>
+
+  body {
+      font-family: sans-serif;
+      direction: rtl;
+      text-align: center;
+      /* align-items: center; */
+      margin-top: 40px;
+    }
+    h2{
+        color: rgb(0, 0, 0);
+    }
+    input {
+      width: 60%;
+      padding: 8px;
+      font-size: 16px;
+      border:none;
+      border-bottom: 2px solid rgb(13, 188, 228);
+      outline: none;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: rgb(13, 188, 228);
+      border: none;
+        border-radius: 4px;
+              font-weight: bold;
+box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+    }
+    button:hover {
+      background-color: #008698;
+      color: wheat;
+      font-weight: bold;
+      box-shadow: none;
+
+    }
+    #qrcode img, #qrcode canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>تحويل أي رابط إلى باركود (QR)</h2>
+
+  <input id="urlInput" type="text" placeholder="أدخل الرابط هنا..." />
+  <br />
+  <button onclick="generateQR()">إنشاء الباركود</button>
+  <button onclick="downloadQR()">تحميل الباركود</button>
+
+  <div id="qrcode"></div>
+
+  <!-- مكتبة QRCode.js من CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    let qr;
+
+    function generateQR() {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) {
+        alert('من فضلك أدخل رابط أولاً');
+        return;
+      }
+
+      // مسح أي كود سابق
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      // إنشاء كود جديد
+      qr = new QRCode(qrContainer, {
+        text: url,
+        width: 256,
+        height: 256
+      });
+    }
+
+    function downloadQR() {
+      const qrContainer = document.getElementById('qrcode');
+
+      // نحاول الحصول على <img> أو <canvas> من المكتبة
+      const img = qrContainer.querySelector('img');
+      const canvas = qrContainer.querySelector('canvas');
+
+      let dataUrl;
+
+      if (img && img.src) {
+        dataUrl = img.src;
+      } else if (canvas) {
+        dataUrl = canvas.toDataURL('image/png');
+      } else {
+        alert('أنشئ الباركود أولاً قبل التحميل');
+        return;
+      }
+
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'qrcode.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>
